@@ -1,0 +1,43 @@
+function search()
+{
+    var search = $("#search_recipe").val();
+
+    if ( typeof(search) != "undefined" )
+    {
+        $.ajax({
+            method: "POST",
+            url: "/recipes/search",
+            data: { name : search},
+            success: function(response)
+            {
+                if ( response["recipes"] )
+                {
+                    var recipes_holder = $("#recipes").html("");
+                    var recipes_response = "";
+                    response = response["recipes"];
+
+                    for ( var i = 0; i < response.length; i++)
+                    {
+                        recipes_response += "<tr>";
+                        recipes_response += "<td>" + response[i].name + "</td>";
+                        recipes_response += "<td>" + response[i].description.substr(0, 81) + "...</td>";
+                        //recipes_response += "<td>" + response[i].products + "</td>";
+                        //recipes_response += "<td>" + response[i].prepration + "</td>";
+                        recipes_response += "<td><a href=\"/recipes/" + response[i].id + "\">Show</a></td>";
+                        recipes_response += "<td><a href=\"/recipes/"+ response[i].id + "/edit\">Edit</a></td>";
+                        recipes_response += "<td><a data-confirm=\"Are you sure?\" rel=\"nofollow\" data-method=\"delete\" href=\"/recipes/" + response[i].id + "\">Destroy</a></td>";
+                        recipes_response += "</tr>";
+                    }
+
+                    recipes_holder.html(recipes_response);
+                }
+            }
+        });
+    }
+}
+
+$( document ).ready(function() {
+    $( "#search_recipe" ).keyup(function(){
+        search();
+    })
+})
